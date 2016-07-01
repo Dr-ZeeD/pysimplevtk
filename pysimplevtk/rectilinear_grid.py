@@ -64,18 +64,20 @@ def array_to_rectilinear_grid(coordinates, cell_data=None):
     c_data = SubElement(piece, 'CellData')
     for name, data in cell_data.items():
         # VTK works with the fortran layout
-        d = np.asfortranarray(data)
+        # print(data.flags['F_CONTIGUOUS'])
+        # d = np.asfortranarray(data)
+        # print(d.flags['F_CONTIGUOUS'])
 
         data_array = SubElement(
             c_data,
             'DataArray',
             attrib={
-                'type': d.dtype.name.capitalize(),
+                'type': data.dtype.name.capitalize(),
                 'Name': name,
                 'format': 'ascii'
             }
         )
 
-        data_array.text = ' '.join(str(i) for i in d.ravel())
+        data_array.text = ' '.join(str(i) for i in data.ravel(order='F'))
 
     return root
