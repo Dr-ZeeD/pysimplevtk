@@ -22,4 +22,10 @@ setup(
     description='High level wrapper to work with vtk xml files.',
     install_requires=[
         'numpy'
+    ],
+    setup_requires=[
+        'pytest-runner'
+    ],
+    tests_require=[
+        'pytest'
     ])

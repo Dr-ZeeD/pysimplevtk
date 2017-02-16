@@ -74,10 +74,41 @@ def array_to_rectilinear_grid(coordinates, cell_data=None):
             attrib={
                 'type': data.dtype.name.capitalize(),
                 'Name': name,
-                'format': 'ascii'
+                'format': 'ascii',
+                'NumberOfComponents': str(
+                    data.size // ((x.size - 1)*(y.size - 1)*(z.size - 1)))
             }
         )
 
-        data_array.text = ' '.join(str(i) for i in data.ravel(order='F'))
+        if data.ndim == 3:
+             data_array.text = ' '.join(str(i) for i in data.ravel(order='F'))
+        else:
+            dat = []
+            for k in range(data.shape[2]):
+                for j in range(data.shape[1]):
+                    for i in range(data.shape[0]):
+                        dat.append(
+                            ' '.join(
+                                str(v) for v in data[i, j, k].ravel(
+                                    order='C')))
+            data_array.text = ' '.join(dat)
+        # print(data_array.text)
+        # print()
+        # a = np.ascontiguousarray(data)
+        # a = a.reshape(-1).view(np.dtype((np.void, data.dtype.itemsize*np.prod(data.shape[3:]))))
+        # a = a.ravel(order='F')
+        # a = a.view(data.dtype)
+        # print(' '.join(str(i) for i in a))
+        # data_array.text = ' '.join(str(i) for i in np.ascontiguousarray(data).reshape(-1).view(np.dtype((np.void, data.dtype.itemsize*np.prod(data.shape[3:])))).ravel(order='F').view(data.dtype))
+
+        # print(data_array.text)
+        # print(' '.join(str(i) for i in np.ascontiguousarray(data).ravel()))
+        #
+        # print(np.ascontiguousarray(data).view(np.dtype((np.void, data.dtype.itemsize*np.prod(data.shape[3:])))).shape)
+        # print(' '.join(str(i) for i in np.ascontiguousarray(data).view(np.dtype((np.void, data.dtype.itemsize*np.prod(data.shape[3:])))).ravel(order='F').view(data.dtype)))
+        #
+        # print()
+        # print(data_array.text)
+        # print()
 
     return root

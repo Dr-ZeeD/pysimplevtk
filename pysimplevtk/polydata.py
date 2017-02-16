@@ -62,22 +62,23 @@ def generate_polydata(
 
     # Points
     # ======
-    points_dtype = min_scalar_type(-max(abs(points))-1)
-    # Some datatypes are not supported by vtk and are hence mapped to the
-    # closest supported datatype
-    if points_dtype == int8:
-        points_dtype = dtype(int16)
-    elif points_dtype == float16:
-        points_dtype = dtype(float32)
+    if len(points) > 0:
+        points_dtype = min_scalar_type(-max(abs(points))-1)
+        # Some datatypes are not supported by vtk and are hence mapped to the
+        # closest supported datatype
+        if points_dtype == int8:
+            points_dtype = dtype(int16)
+        elif points_dtype == float16:
+            points_dtype = dtype(float32)
 
-    points_element = SubElement(piece, 'Points')
-    points_data_array = SubElement(
-        points_element, 'DataArray',
-        {'NumberOfComponents': str(points.shape[1]),
-         'format': 'ascii',
-         'type': points_dtype.name.capitalize()})
-    points_data_array.text = ' '.join(
-        ' '.join(str(coord) for coord in point) for point in points)
+        points_element = SubElement(piece, 'Points')
+        points_data_array = SubElement(
+            points_element, 'DataArray',
+            {'NumberOfComponents': str(points.shape[1]),
+             'format': 'ascii',
+             'type': points_dtype.name.capitalize()})
+        points_data_array.text = ' '.join(
+            ' '.join(str(coord) for coord in point) for point in points)
 
     # Lines
     # =====
