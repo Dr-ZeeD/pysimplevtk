@@ -64,9 +64,6 @@ def array_to_rectilinear_grid(coordinates, cell_data=None):
     c_data = SubElement(piece, 'CellData')
     for name, data in cell_data.items():
         # VTK works with the fortran layout
-        # print(data.flags['F_CONTIGUOUS'])
-        # d = np.asfortranarray(data)
-        # print(d.flags['F_CONTIGUOUS'])
 
         data_array = SubElement(
             c_data,
@@ -77,11 +74,10 @@ def array_to_rectilinear_grid(coordinates, cell_data=None):
                 'format': 'ascii',
                 'NumberOfComponents': str(
                     data.size // ((x.size - 1)*(y.size - 1)*(z.size - 1)))
-            }
-        )
+            })
 
         if data.ndim == 3:
-             data_array.text = ' '.join(str(i) for i in data.ravel(order='F'))
+            data_array.text = ' '.join(str(i) for i in data.ravel(order='F'))
         else:
             dat = []
             for k in range(data.shape[2]):
@@ -92,23 +88,5 @@ def array_to_rectilinear_grid(coordinates, cell_data=None):
                                 str(v) for v in data[i, j, k].ravel(
                                     order='C')))
             data_array.text = ' '.join(dat)
-        # print(data_array.text)
-        # print()
-        # a = np.ascontiguousarray(data)
-        # a = a.reshape(-1).view(np.dtype((np.void, data.dtype.itemsize*np.prod(data.shape[3:]))))
-        # a = a.ravel(order='F')
-        # a = a.view(data.dtype)
-        # print(' '.join(str(i) for i in a))
-        # data_array.text = ' '.join(str(i) for i in np.ascontiguousarray(data).reshape(-1).view(np.dtype((np.void, data.dtype.itemsize*np.prod(data.shape[3:])))).ravel(order='F').view(data.dtype))
-
-        # print(data_array.text)
-        # print(' '.join(str(i) for i in np.ascontiguousarray(data).ravel()))
-        #
-        # print(np.ascontiguousarray(data).view(np.dtype((np.void, data.dtype.itemsize*np.prod(data.shape[3:])))).shape)
-        # print(' '.join(str(i) for i in np.ascontiguousarray(data).view(np.dtype((np.void, data.dtype.itemsize*np.prod(data.shape[3:])))).ravel(order='F').view(data.dtype)))
-        #
-        # print()
-        # print(data_array.text)
-        # print()
 
     return root
